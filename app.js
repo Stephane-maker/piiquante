@@ -2,8 +2,12 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 const Sauce = require("./models/sauce");
+const User = require("./models/user");
+const bcrypt = require("bcrypt");
 const app = express();
 
+
+app.use(express.json());
 
 mongoose.connect("mongodb+srv://admin:WaTW7M49WJZk9Nzm@cluster0.v51i2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
         useNewUrlParser: true,
@@ -19,26 +23,29 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use("/api/sauces", (req, res, next) => {
-    const sauces = [{
-        name: "Sauce bechamel",
-        manufacturer: "Thiebaut Stephane",
-        description: "Découvrez la recette de la Sauce Béchamel, un classique de la cuisine française, qui sert de base à de nombreuses préparations comme les endives au jambon, les lasagnes ou de savoureux croque-monsieur",
-        mainPepper: "Noix de muscade",
-        imageUrl: "https://img-3.journaldesfemmes.fr/1PlGF-0oQSYQs_S_nmcXmkjKjfo=/750x500/smart/91f0c055db7e4e9f9025d106bba4ed40/recipe-jdf/10002052.jpg",
-        heat: "4 personnes",
-    }];
-    res.status(201).json(sauces);
-});
-app.post('/api/stuff', (req, res, next) => {
 
+app.post('/api/stuff', (req, res, next) => {
+    delete req.body._id;
     const sauce = new Sauce({
         ...req.body
     });
-    console.log(sauce)
     sauce.save()
         .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
         .catch(error => res.status(400).json({ error }));
 });
+
+app.post("/api/auth/signup", (req, res, next) => {
+    bcrypt.hash(req.body.password, 10)
+        .then(hash => {
+            const user = new User({
+                email: req.body.email,
+                password: hash
+            });
+            user.save();
+        })
+        .then(() => res.status(201).json({ message: 'utilisateur crée!' }))
+        .catch(error => res.status(400).json({ error }));
+
+})
 
 module.exports = app;
