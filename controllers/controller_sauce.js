@@ -22,3 +22,14 @@ exports.selectAllSauce = (req, res, next) => {
         .then(Sauce => res.status(200).json(Sauce))
         .catch(error => res.status(400).json({ error }));
 };
+exports.modifiySauce = (req, res, next) => {
+    Sauce.updateOne({ _id: req.params.id }, {...req.body, id: req.params.id })
+        .then(() => res.status(200).json({ message: "Objet modifié" }))
+        .catch(error => res.status(400).json({ error }));
+};
+
+exports.deleteSauce = (req, res, next) => {
+    Sauce.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: "Objet supprimé" }))
+        .catch(error => res.status(400).json({ error }));
+}
