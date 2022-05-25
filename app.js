@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 
-const connexionUser = require("./router_connexion/connexion_user");
-const routerSauce = require("./router_sauce/router_sauce");
+const connexionUser = require("./router/connexion_user");
+const routerSauce = require("./router/router_sauce");
 
 const app = express();
 

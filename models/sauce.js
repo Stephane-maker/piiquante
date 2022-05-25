@@ -2,6 +2,7 @@ const { type } = require('express/lib/response');
 const mongoose = require('mongoose');
 
 const schemaSauce = mongoose.Schema({
+    _id: { type: String },
     name: { type: String, required: true },
     manufacturer: { type: String, required: true },
     description: { type: String, required: true },
