@@ -18,18 +18,18 @@ exports.createUser = (req, res, next) => {
 }
 exports.connexionUser = (req, res, next) => {
     User.findOne({ email: req.body.email })
-        .then(User => {
-            if (!User) {
+        .then(utilisateur => {
+            if (!utilisateur) {
                 return res.status(401).json({ error: "utilisateur non trouvé" });
             }
-            bcrypt.compare(req.body.password, User.password)
+            bcrypt.compare(req.body.password, utilisateur.password)
                 .then(valid => {
                     if (!valid) {
                         return res.status(401).json({ error: "mot de passe incorrect" });
                     }
                     res.status(200).json({
-                        UserId: User._id,
-                        token: jsonWebToken.sign({ UserId: User._id },
+                        UserId: utilisateur._id,
+                        token: jsonWebToken.sign({ UserId: utilisateur._id },
                             'RANDOM_TOKEN_SECRET', { expiresIn: '24h' }
                         )
                     });
