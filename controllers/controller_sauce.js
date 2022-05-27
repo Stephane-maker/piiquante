@@ -8,7 +8,7 @@ exports.createSauce = (req, res, next) => {
     const SauceObject = JSON.parse(req.body.sauce)
     delete SauceObject._id
 
-    SauceObject._id = jsonWebToken.sign({ userId: req.auth.userId }, "RANDOM_SECRET_TOKEN");
+    SauceObject._id = jsonWebToken.sign({ objectId: req.auth.userId }, "RANDOM_SECRET_TOKEN");
 
     const sauce = new Sauce({
         ...SauceObject,
@@ -31,25 +31,30 @@ exports.selectAllSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 exports.modifiySauce = (req, res, next) => {
-    Sauce.updateOne({ _id: req.params.id }, {...req.body, id: req.params.id })
-        .then(() => res.status(200).json({ message: "Objet modifié" }))
-        .catch(error => res.status(400).json({ error }));
+    const idObject = req.params.id;
+    const decodeObjectId = jsonWebToken.verify(idObject, "RANDOM_SECRET_TOKEN");
+    if (decodeObjectId.objectId == req.auth.userId) {
+        Sauce.updateOne({ _id: req.params.id }, {...req.body, id: req.params.id })
+            .then(() => res.status(200).json({ message: "Objet modifié" }))
+            .catch(error => res.status(400).json({ error }));
+    } else {
+        return res.status(400).json({ message: "unauthorized request" });
+    }
 };
 
 exports.deleteSauce = (req, res, next) => {
-    const token = req.params.id;
-
-    const decodeToken = jsonWebToken.verify(token, "RANDOM_SECRET_TOKEN");
-
-    if (decodeToken.userId === req.auth.userId) {
-        console.log("ok")
+    const idObject = req.params.id;
+    const decodeObjectId = jsonWebToken.verify(idObject, "RANDOM_SECRET_TOKEN");
+    console.log(decodeObjectId)
+    console.log(req.auth.userId)
+    if (decodeObjectId.objectId == req.auth.userId) {
+        Sauce.findOne({ _id: req.params.id })
+        Sauce.deleteOne({ _id: req.params.id })
+            .then(() => res.status(200).json({ message: "Object deleted" }))
+            .catch((error => res.status(400).json({ error })));
     } else {
-        console.log("non")
+        return res.status(400).json({ message: "unauthorized request" });
     }
-
-
-
-
 
     // Sauce.findOne({ _id: req.params.id })
     //     .then(sauce => {
