@@ -30,10 +30,10 @@ exports.selectAllSauce = (req, res, next) => {
         .then(Sauce => res.status(200).json(Sauce))
         .catch(error => res.status(400).json({ error }));
 };
-exports.modifiySauce = (req, res, next) => {
+exports.modifySauce = (req, res, next) => {
     const idObject = req.params.id;
     const decodeObjectId = jsonWebToken.verify(idObject, "RANDOM_SECRET_TOKEN");
-    if (decodeObjectId.objectId == req.auth.userId) {
+    if (decodeObjectId.objectId === req.auth.userId) {
         Sauce.updateOne({ _id: req.params.id }, {...req.body, id: req.params.id })
             .then(() => res.status(200).json({ message: "Objet modifié" }))
             .catch(error => res.status(400).json({ error }));
@@ -45,25 +45,17 @@ exports.modifiySauce = (req, res, next) => {
 exports.deleteSauce = (req, res, next) => {
     const idObject = req.params.id;
     const decodeObjectId = jsonWebToken.verify(idObject, "RANDOM_SECRET_TOKEN");
-    console.log(decodeObjectId)
-    console.log(req.auth.userId)
-    if (decodeObjectId.objectId == req.auth.userId) {
+    if (decodeObjectId.objectId === req.auth.userId) {
         Sauce.findOne({ _id: req.params.id })
-        Sauce.deleteOne({ _id: req.params.id })
-            .then(() => res.status(200).json({ message: "Object deleted" }))
-            .catch((error => res.status(400).json({ error })));
+            .then(sauce => {
+                const filename = sauce.imageUrl.split("/image/")[1];
+                fs.unlink(`image/${filename}`, () => {
+                    Sauce.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: "Object deleted" }))
+                        .catch((error) => res.status(400).json({ error }))
+                })
+            })
     } else {
         return res.status(400).json({ message: "unauthorized request" });
     }
-
-    // Sauce.findOne({ _id: req.params.id })
-    //     .then(sauce => {
-    //         const filename = sauce.imageUrl.split('/image/')[1];
-    //         fs.unlink(`image/${filename}`, () => {
-    //             Sauce.deleteOne({ _id: req.params.id })
-    //                 .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
-    //                 .catch(error => res.status(400).json({ error }));
-    //         });
-    //     })
-    //     .catch(error => res.status(500).json({ error }));
 };
