@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/', authenticateToken, multer, controllerSauce.createSauce);
 router.get("/:id", authenticateToken, controllerSauce.selectOneSauce);
 router.get('/', authenticateToken, controllerSauce.selectAllSauce);
-router.put('/:id', authenticateToken, controllerSauce.modifiySauce);
+router.put('/:id', authenticateToken, controllerSauce.modifySauce);
 router.delete("/:id", authenticateToken, controllerSauce.deleteSauce);
 
 module.exports = router;
