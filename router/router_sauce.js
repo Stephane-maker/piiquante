@@ -11,5 +11,6 @@ router.get("/:id", authenticateToken, controllerSauce.selectOneSauce);
 router.get('/', authenticateToken, controllerSauce.selectAllSauce);
 router.put('/:id', authenticateToken, controllerSauce.modifySauce);
 router.delete("/:id", authenticateToken, controllerSauce.deleteSauce);
+router.post("/:id/like", authenticateToken, controllerSauce.likedSauce);
 
 module.exports = router;
