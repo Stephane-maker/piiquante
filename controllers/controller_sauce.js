@@ -1,6 +1,8 @@
 const Sauce = require("../models/sauce");
 const fs = require("fs");
 const jsonWebToken = require("jsonwebtoken");
+const sauce = require("../models/sauce");
+require("dotenv").config()
 
 
 
@@ -8,7 +10,7 @@ exports.createSauce = (req, res, next) => {
     const SauceObject = JSON.parse(req.body.sauce)
     delete SauceObject._id
 
-    SauceObject._id = jsonWebToken.sign({ objectId: req.auth.userId }, "RANDOM_SECRET_TOKEN");
+    SauceObject._id = jsonWebToken.sign({ objectId: req.auth.userId }, process.env.SECRET_TOKEN);
 
     const sauce = new Sauce({
         ...SauceObject,
@@ -32,7 +34,7 @@ exports.selectAllSauce = (req, res, next) => {
 };
 exports.modifySauce = (req, res, next) => {
     const idObject = req.params.id;
-    const decodeObjectId = jsonWebToken.verify(idObject, "RANDOM_SECRET_TOKEN");
+    const decodeObjectId = jsonWebToken.verify(idObject, process.env.SECRET_TOKEN);
     if (decodeObjectId.objectId === req.auth.userId) {
         Sauce.updateOne({ _id: req.params.id }, {...req.body, id: req.params.id })
             .then(() => res.status(200).json({ message: "Objet modifié" }))
@@ -44,7 +46,7 @@ exports.modifySauce = (req, res, next) => {
 
 exports.deleteSauce = (req, res, next) => {
     const idObject = req.params.id;
-    const decodeObjectId = jsonWebToken.verify(idObject, "RANDOM_SECRET_TOKEN");
+    const decodeObjectId = jsonWebToken.verify(idObject, process.env.SECRET_TOKEN);
     if (decodeObjectId.objectId === req.auth.userId) {
         Sauce.findOne({ _id: req.params.id })
             .then(sauce => {
@@ -59,3 +61,16 @@ exports.deleteSauce = (req, res, next) => {
         return res.status(400).json({ message: "unauthorized request" });
     }
 };
+
+exports.likedSauce = (req, res, next) => {
+
+
+
+    Sauce.updateOne({ _id: req.params.id }, { usersLiked: req.auth.userId })
+
+    .then(() => res.status(200).json({ message: "Object liked" }))
+        .catch(error => res.status(400).json({ error }));
+
+
+
+}
