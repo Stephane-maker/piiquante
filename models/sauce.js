@@ -13,7 +13,7 @@ const schemaSauce = mongoose.Schema({
     usersDisliked: [{ type: String }],
     likes: { type: Number },
     dislikes: { type: Number },
-    idCompare: { type: String, require: true }
+    userId: { type: String, require: true }
 });
 
-module.exports = mongoose.model('Sauce', schemaSauce);
+module.exports = mongoose.model('Sauce', schemaSauce)
