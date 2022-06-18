@@ -16,4 +16,4 @@ const schemaSauce = mongoose.Schema({
     userId: { type: String, require: true }
 });
 
-module.exports = mongoose.model('Sauce', schemaSauce);
+module.exports = mongoose.model('Sauce', schemaSauce)
