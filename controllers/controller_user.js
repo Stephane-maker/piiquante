@@ -27,49 +27,18 @@ exports.connexionUser = (req, res, next) => {
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
             }
-
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {
-                        let result = JSON.parse(test) + 1;
-                        test = result
-
-                        if (test >= 4) {
-                            result = 0
-                            console.log("ici")
-                            test = 4;
-                            console.log(test);
-                            !bcrypt.compare(req.body.password, user.password)
-
-                            const heure = new Date();
-                            let minuteTest = heure.getMinutes() + 1;
-                            console.log(minuteTest)
-                            console.log(heure.getMinutes() >= minuteTest)
-                            if (!minuteTest >= heure.getMinutes()) {
-
-                                test = [0];
-                                bcrypt.compare(req.body.password, user.password)
-                                console.log(test)
-                            }
-                            return res.status(401).json("Your account has been unlocked")
-
-                        }
-                        return res.status(501).json({ error: "Your account has been blocked for 1 minute" });
-
-
-
-
+                        return res.status(401).json("Your account has been unlocked")
                     }
+                    res.status(200).json({
+                        userId: user._id,
+                        token: jsonWebToken.sign({ userId: user._id },
+                            process.env.SECRET_TOKEN, { expiresIn: '24h' }
+                        )
+                    });
 
-                    if (valid && test != 4) {
-                        bcrypt.compare(req.body.password, user.password)
-                        res.status(200).json({
-                            userId: user._id,
-                            token: jsonWebToken.sign({ userId: user._id },
-                                process.env.SECRET_TOKEN, { expiresIn: '24h' }
-                            )
-                        });
-                    }
                 })
 
         })
