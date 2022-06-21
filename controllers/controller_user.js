@@ -30,7 +30,7 @@ exports.connexionUser = (req, res, next) => {
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {
-                        return res.status(401).json("Your account has been unlocked")
+                        return res.status(401).json("Mot de passe incorrect")
                     }
                     res.status(200).json({
                         userId: user._id,
