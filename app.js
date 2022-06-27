@@ -5,6 +5,7 @@ const path = require("path");
 
 const connexionUser = require("./router/connexion_user");
 const routerSauce = require("./router/router_sauce");
+require("dotenv").config()
 
 const app = express();
 
@@ -12,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 //systeme de connexion a mango DB
-mongoose.connect("mongodb+srv://admin:WaTW7M49WJZk9Nzm@cluster0.v51i2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://" + process.env.CONNEXION_DB + ".v51i2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })

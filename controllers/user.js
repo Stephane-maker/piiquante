@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const jsonWebToken = require("jsonwebtoken");
-let test = [0];
+
 
 require("dotenv").config()
 
@@ -11,7 +11,6 @@ exports.createUser = (req, res, next) => {
             const user = new User({
                 email: req.body.email,
                 password: hash,
-                essaye: 0
             });
             user.save()
                 .then(() => res.status(201).json({ message: 'utilisateur crée!' }))
@@ -35,7 +34,7 @@ exports.connexionUser = (req, res, next) => {
                     res.status(200).json({
                         userId: user._id,
                         token: jsonWebToken.sign({ userId: user._id },
-                            process.env.SECRET_TOKEN, { expiresIn: '24h' }
+                            process.env.SECRET_TOKEN + process.env.ALGORITHM, { expiresIn: '24h' }
                         )
                     });
 
