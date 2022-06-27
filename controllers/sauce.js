@@ -4,7 +4,7 @@ const { cp } = require("fs/promises");
 const { collection } = require("../models/sauce");
 const sauce = require("../models/sauce");
 
-require("dotenv").config();
+
 
 exports.createSauce = (req, res, next) => {
     const SauceObject = JSON.parse(req.body.sauce)
@@ -96,27 +96,26 @@ function LikeAndDislike(argument, orderDB, res, req) {
 
 exports.likedSauce = (req, res, next) => {
 
-
-    Sauce.findOne({ _id: req.params.id })
+    return Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             switch (req.body.like) {
                 case 1:
                     if (!sauce.usersLiked.includes(req.auth.userId)) {
-                        LikeAndDislike("$push", "usersLiked", res, req)
+                        return LikeAndDislike("$push", "usersLiked", res, req)
                     }
                     break;
                 case 0:
 
                     if (sauce.usersLiked.includes(req.auth.userId)) {
-                        LikeAndDislike("$pull", "usersLiked", res, req)
+                        return LikeAndDislike("$pull", "usersLiked", res, req)
                     } else {
-                        LikeAndDislike("$pull", "usersDisliked", res, req)
+                        return LikeAndDislike("$pull", "usersDisliked", res, req)
                     }
 
                     break;
                 case -1:
                     if (!sauce.usersDisliked.includes(req.auth.userId)) {
-                        LikeAndDislike("$push", "usersDisliked", res, req)
+                        return LikeAndDislike("$push", "usersDisliked", res, req)
                     }
                     break;
 
